@@ -4,6 +4,7 @@
   "description": "",
   "main": "generateFakeData.js",
   "scripts": {
+    "start": "node generateSampleData.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,7 @@
     "faker": "^5.1.0",
     "fs": "0.0.1-security",
     "md5": "^2.3.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "prepend": "^1.0.2"
   }
 }
