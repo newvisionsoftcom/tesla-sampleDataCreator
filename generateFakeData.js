@@ -6,7 +6,6 @@ const { resolve } = require('path');
 // let creditCardNumbers = [];
 
 const threshold = 1000000;
-// const threshold = 1000;
 
 class FileRecord {
     constructor(creditCardNumber, amount, type, merchantDetail, uniqueID, createdDateTime, status, authorizationStatus) {
