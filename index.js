@@ -1,9 +1,40 @@
+#!/usr/bin/env node
+
 const faker = require('faker');
 var md5 = require('md5');
 var fs = require('fs');
-var prepend = require('prepend');
 
-var threshold = 100;
+const chalk = require("chalk");
+const boxen = require("boxen");
+
+const yargs = require("yargs");
+
+const options = yargs
+ .usage("Usage: -n Number of Records to be populated")
+ .option("n", { alias: "numberOfRecords", describe: "Number of Records", type: "number", demandOption: true })
+ .argv;
+
+const greeting2 = `Hello, We are generating ${options.numberOfRecords} records for you`;
+
+console.log(greeting2);
+
+
+const greeting = chalk.white.bold("Generating Tesla Sample Data...");
+
+const boxenOptions = {
+ padding: 1,
+ margin: 1,
+ borderStyle: "round",
+ borderColor: "green",
+ backgroundColor: "#555555"
+};
+const msgBox = boxen( greeting, boxenOptions );
+
+console.log(msgBox);
+
+
+
+var threshold = options.numberOfRecords;
 var datetime = new Date();
 var month = datetime.getUTCMonth() + 1
 var amount = 0;
