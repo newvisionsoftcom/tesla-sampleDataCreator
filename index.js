@@ -79,7 +79,10 @@ async function appendData(data){
 function generateCreditCardNumber() {
     
     let creditCardNumbers = [];
-    for (let i = 0; i < threshold/100; i++) {
+    if(threshold < 10) loop = threshold;
+    else if(threshold < 100) loop = threshold / 10;
+    else loop = threshold / 100
+    for (let i = 0; i < loop; i++) {
         creditCardNumbers.push(faker.finance.creditCardNumber());
     }
 
@@ -96,36 +99,36 @@ function generateFileData(i){
     let merchantDetail = faker.company.companyName().replace(",", "")
     let uniqueID = faker.random.uuid()
     let createdDateTime = faker.date.recent(30).toISOString()
-
-    sampleDataStream.write(String(creditCardNumber + "," + transactionAmt + "," + merchantDetail + "," 
+    let type = i % 2 == 0 ? 'DEBIT' : 'CREDIT';
+    sampleDataStream.write(String(creditCardNumber + "," + transactionAmt + "," + type + "," + merchantDetail + "," 
                     + uniqueID + "," + createdDateTime + "\n"));
 
     return {
         creditCardNumber : creditCardNumber,
         transactionAmt : transactionAmt,
         merchantDetail: merchantDetail,
-        type: i % 2 == 0 ? 'DEBIT' : 'CREDIT',
+        type: type,
         uniqueID : uniqueID,
         createdDateTime : createdDateTime
     }
 }
 
 function generateTransactionData(record){
-    transactionStream.write("insert into Transaction (CardNumber,Amount,Type,Merchant,UniqueID,CreatedDateTime," +
-    "Status,AuthorizationStatus" + ") values ( " +
+    transactionStream.write("insert into transaction (card_number,amount,transaction_type,merchant_details,unique_id,transaction_date," +
+    "status,auth_status" + ") values ( " +
     "'" + record.creditCardNumber + "'" + "," +
     record.transactionAmt + "," +
     "'" + record.type + "'" + "," +
     "'" + record.merchantDetail + "'" + "," +
-    "'" + record.uniqueID + "'" + "," +
-    record.createdDateTime + "," +
+    "'" + record.uniqueID + "'" + ",'" +
+    record.createdDateTime + "'," +
     "'" + "A" + "'" + "," +
     "'" + "Approved" + "'" +
     ");\n");
 }
 
 function generateAccountData(record){
-    accountStream.write("insert into Account (CardNumber,Balance,CreditLimit,Status) values ( " +
+    accountStream.write("insert into account (card_number,balance,credit_limit,status) values ( " +
     "'" + record.creditCardNumber + "'" + "," +
     faker.finance.amount() + "," +
     10000 + "," +
