@@ -56,7 +56,10 @@ sampleDataStream.write("")
 for(let i = 0; i < threshold; i++){
     let transaction = generateFileData(i);
     generateTransactionData(transaction);
-    generateAccountData(transaction);
+}
+
+for (let j = 0; j < creditCardNumbers.length; j++){
+    generateAccountData(creditCardNumbers[j]);
 }
 sampleDataStream.write(String(threshold));
 sampleDataStream.end();
@@ -80,7 +83,7 @@ function generateCreditCardNumber() {
     
     let creditCardNumbers = [];
     if(threshold < 10) loop = threshold;
-    else if(threshold < 100) loop = threshold / 10;
+    else if(threshold <= 100) loop = threshold / 10;
     else loop = threshold / 100
     for (let i = 0; i < loop; i++) {
         creditCardNumbers.push(faker.finance.creditCardNumber());
@@ -127,9 +130,9 @@ function generateTransactionData(record){
     ");\n");
 }
 
-function generateAccountData(record){
+function generateAccountData(creditCardNumber){
     accountStream.write("insert into account (card_number,balance,credit_limit,status) values ( " +
-    "'" + record.creditCardNumber + "'" + "," +
+    "'" + creditCardNumber + "'" + "," +
     faker.finance.amount() + "," +
     10000 + "," +
     "'" + "Active" + "'" +
