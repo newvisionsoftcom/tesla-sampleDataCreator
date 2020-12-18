@@ -52,14 +52,21 @@ var sampleDataStream = fs.createWriteStream(sampleDataFileName, {flags: 'a'});
 var transactionStream = fs.createWriteStream(transactionFileName, {flags: 'a'});
 var accountStream = fs.createWriteStream(accountFileName, {flags: 'a'});
 
+var arr = []
 sampleDataStream.write("")
 for(let i = 0; i < threshold; i++){
     let transaction = generateFileData(i);
     generateTransactionData(transaction);
+    arr.push(transaction.creditCardNumber)
 }
 
-for (let j = 0; j < creditCardNumbers.length; j++){
-    generateAccountData(creditCardNumbers[j]);
+console.log(arr.length)
+
+var newArr = Array.from(new Set(arr))
+
+console.log(newArr.length)
+for (let j = 0; j < newArr.length; j++){
+    generateAccountData(newArr[j]);
 }
 sampleDataStream.write(String(threshold));
 sampleDataStream.end();
@@ -100,6 +107,7 @@ function generateFileData(i){
 
     let creditCardNumber = md5(faker.random.arrayElement(creditCardNumbers)); 
     let merchantDetail = faker.company.companyName().replace(",", "")
+    merchantDetail = merchantDetail.replace(/[^a-zA-Z ]/g, "");
     let uniqueID = faker.random.uuid()
     let createdDateTime = faker.date.recent(30).toISOString()
     let type = i % 2 == 0 ? 'DEBIT' : 'CREDIT';
@@ -117,7 +125,7 @@ function generateFileData(i){
 }
 
 function generateTransactionData(record){
-    transactionStream.write("insert into transaction (card_number,amount,transaction_type,merchant_details,unique_id,transaction_date," +
+    transactionStream.write("insert into public.transaction (card_number,amount,transaction_type,merchant_details,unique_id,transaction_date," +
     "status,auth_status" + ") values ( " +
     "'" + record.creditCardNumber + "'" + "," +
     record.transactionAmt + "," +
@@ -131,7 +139,7 @@ function generateTransactionData(record){
 }
 
 function generateAccountData(creditCardNumber){
-    accountStream.write("insert into account (card_number,balance,credit_limit,status) values ( " +
+    accountStream.write("insert into public.account (card_number,balance,credit_limit,status) values ( " +
     "'" + creditCardNumber + "'" + "," +
     faker.finance.amount() + "," +
     10000 + "," +
